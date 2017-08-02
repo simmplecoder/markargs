@@ -6,28 +6,38 @@
 #include "syntax_error.hpp"
 #include "token.hpp"
 
-class tokenizer
+namespace markargs
 {
-	std::istream* stream;
-public:
-	tokenizer(std::istream& is) noexcept;
+    class tokenizer
+    {
+        std::istream* stream;
+        bool state;
+    public:
+        tokenizer(std::istream& is) noexcept;
 
-    //simultaneous access to multiple tokenizers
-    //will have *very* surprising behavior
-    tokenizer(const tokenizer& other) = delete;
-    tokenizer& operator=(const tokenizer& other) = delete;
+        //simultaneous access to multiple tokenizers
+        //will have *very* surprising behavior
+        tokenizer(const tokenizer& other) = delete;
 
-    tokenizer(tokenizer&& other) noexcept;
-    tokenizer& operator=(tokenizer&& other) = delete;
+        tokenizer& operator=(const tokenizer& other) = delete;
 
-	friend tokenizer& operator>>(tokenizer& , token& tk);
+        tokenizer(tokenizer&& other) noexcept;
 
-private:
-	token read_identifier();
-	token read_number();
-	token read_operator();
+        tokenizer& operator=(tokenizer&& other) = delete;
 
-	bool is_operator(char c) const noexcept;
-};
+        operator bool();
+
+        friend tokenizer& operator>>(tokenizer&, token& tk);
+
+    private:
+        token read_identifier();
+
+        token read_number();
+
+        token read_operator();
+
+        bool is_operator(char c) const noexcept;
+    };
+}
 
 #endif

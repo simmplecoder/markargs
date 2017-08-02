@@ -3,37 +3,41 @@
 
 #include <string>
 
-struct token
+namespace markargs
 {
-	enum class token_type
-	{
-		NAME,
-		NUMBER,
-		OP,
-        NONE //for debug purposes
-	};
 
-	token_type tp;
-	std::string payload;
+    struct token
+    {
+        enum class token_type
+        {
+            NAME,
+            NUMBER,
+            OP,
+            NONE //for debug purposes
+        };
 
-	token() :
-            tp(token_type::NONE)
-    {}
+        token_type tp;
+        std::string payload;
 
-	token(token_type tp_, const std::string& payload_):
-		tp(tp_),
-		payload(payload_)
-	{}
-};
+        token() :
+                tp(token_type::NONE)
+        {}
 
-inline bool operator==(const token& lhs, const token& rhs)
-{
-	return lhs.tp == rhs.tp && lhs.payload == rhs.payload;
-}
+        token(token_type tp_, const std::string& payload_) :
+                tp(tp_),
+                payload(payload_)
+        {}
+    };
 
-inline bool operator!=(const token& lhs, const token& rhs)
-{
-    return !(lhs == rhs);
+    inline bool operator==(const token& lhs, const token& rhs)
+    {
+        return lhs.tp == rhs.tp && lhs.payload == rhs.payload;
+    }
+
+    inline bool operator!=(const token& lhs, const token& rhs)
+    {
+        return !(lhs == rhs);
+    }
 }
 
 #endif

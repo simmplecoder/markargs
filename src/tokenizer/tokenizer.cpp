@@ -2,89 +2,110 @@
 #include <memory>
 #include <cctype>
 
-tokenizer::tokenizer(std::istream& is) noexcept:
-	stream(std::addressof(is))
-{}
-
-tokenizer::tokenizer(tokenizer&& other) noexcept:
-        stream(other.stream)
+namespace markargs
 {
-    other.stream = nullptr;
-}
+    tokenizer::tokenizer(std::istream& is) noexcept:
+            stream(std::addressof(is))
+    {}
 
-token tokenizer::read_identifier()
-{
-	std::string current_identifier;
-	char next_char;
-	//no need to check, since this function is called from gigantic pile of ifs which means next_char is a letter
-	*stream >> next_char;
-	current_identifier += next_char;
+    tokenizer::tokenizer(tokenizer&& other) noexcept:
+            stream(other.stream)
+    {
+        other.stream = nullptr;
+    }
 
-	//numbers in identifiers are allowed if they are not leading
-	while (*stream >> next_char &&  (std::isalnum((unsigned char)next_char) || next_char == '_'))
-	{
-		current_identifier += next_char;
-	}
+    token tokenizer::read_identifier()
+    {
+        std::string current_identifier;
+        char next_char;
+        //no need to check, since this function is called from gigantic pile of ifs which means next_char is a letter
+        *stream >> next_char;
+        current_identifier += next_char;
 
-    stream->unget(); //sets badbit if eof, so no check for eof
+        //numbers in identifiers are allowed if they are not leading
+        while (*stream >> next_char && (std::isalnum((unsigned char) next_char) || next_char == '_'))
+        {
+            current_identifier += next_char;
+        }
 
-	return token{ token::token_type::NAME, current_identifier };
-}
+        stream->unget(); //sets badbit if eof, so no check for eof
 
-token tokenizer::read_number()
-{
-	std::string current_number;
-	char next_char = 0;
-	while (*stream >> next_char && std::isdigit((unsigned char)next_char))
-	{
-		current_number += next_char;
-	}
+        return token{token::token_type::NAME, current_identifier};
+    }
 
-    stream->unget(); //sets badbit if eof, so no check for eof
+    token tokenizer::read_number()
+    {
+        std::string current_number;
+        char next_char = 0;
+        while (*stream >> next_char && std::isdigit((unsigned char) next_char))
+        {
+            current_number += next_char;
+        }
 
-	return token{ token::token_type::NUMBER, current_number };
-}
+        stream->unget(); //sets badbit if eof, so no check for eof
 
-token tokenizer::read_operator()
-{
-	char op;
-	*stream >> op;
-	return token{ token::token_type::OP, std::string{op} };
-}
+        return token{token::token_type::NUMBER, current_number};
+    }
 
-bool tokenizer::is_operator(char c) const noexcept
-{
-	return c == '+' || c == '-' || c == '=';
-}
+    token tokenizer::read_operator()
+    {
+        char op;
+        *stream >> op;
+        return token{token::token_type::OP, std::string{op}};
+    }
 
-tokenizer & operator>>(tokenizer& t, token & tk)
-{
-	auto& stream = *t.stream;
-	char next_char;
+    bool tokenizer::is_operator(char c) const noexcept
+    {
+        return c == '+' || c == '-' || c == '=';
+    }
 
-	//discard spaces
-	do
-	{
-		stream >> next_char;
-	} while (std::isspace((unsigned char)next_char));
-	stream.unget();
+    tokenizer::operator bool()
+    {
+        return state;
+    }
 
-	if (std::isalpha((unsigned char)next_char))
-	{
-		tk = t.read_identifier();
-	}
-	else if (std::isdigit((unsigned char)next_char))
-	{
-		tk = t.read_number();
-	}
-	else if (t.is_operator(next_char))
-	{
-		tk = t.read_operator();
-	}
-	else
-	{
-		throw std::invalid_argument("character outside of character set encountered");
-	}
+    tokenizer& operator>>(tokenizer& t, token& tk)
+    {
+        auto& stream = *t.stream;
+        char next_char;
 
-	return t;
+        if (!stream)
+        {
+            t.state = false;
+            return t;
+        }
+
+        //discard spaces
+        do
+        {
+            stream >> next_char;
+        } while (std::isspace((unsigned char) next_char));
+
+        if (!stream)
+        {
+            t.state = false;
+            return t;
+        }
+
+        stream.unget();
+
+        if (std::isalpha((unsigned char) next_char) || next_char == '_')
+        {
+            tk = t.read_identifier();
+        }
+        else if (std::isdigit((unsigned char) next_char))
+        {
+            tk = t.read_number();
+        }
+        else if (t.is_operator(next_char))
+        {
+            tk = t.read_operator();
+        }
+        else
+        {
+            throw std::invalid_argument("character outside of character set encountered");
+        }
+
+        return t;
+    }
 }

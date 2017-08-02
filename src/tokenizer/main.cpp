@@ -9,21 +9,21 @@
 
 #include "tokenizer.hpp"
 
-std::ostream& operator<<(std::ostream& os, const std::vector<token>& tokens)
+std::ostream& operator<<(std::ostream& os, const std::vector<markargs::token>& tokens)
 {
 	std::string initial_expr;
-	for (const token& t : tokens)
+	for (const markargs::token& t : tokens)
 	{
 		std::string type_str;
 		switch (t.tp)
 		{
-		case token::token_type::NAME:
+        case markargs::token::token_type::NAME:
 			type_str = "name";
 			break;
-		case token::token_type::NUMBER:
+        case markargs::token::token_type::NUMBER:
 			type_str = "number";
 			break;
-		case token::token_type::OP:
+        case markargs::token::token_type::OP:
 			type_str = "operator";
 			break;
 		default:
@@ -38,30 +38,61 @@ std::ostream& operator<<(std::ostream& os, const std::vector<token>& tokens)
 	return os;
 }
 
+void fixed_tokencount_check()
+{
+    std::istringstream ss("a = b + 5");
+    std::cout << ss.str() << '\n';
+    markargs::tokenizer tokenizer(ss);
+    std::vector<markargs::token> tokens(5);
+    for (auto& token : tokens)
+    {
+        tokenizer >> token;
+    }
+
+    std::vector<markargs::token> correct_answer{
+            markargs::token{markargs::token::token_type::NAME, "a"},
+            markargs::token{markargs::token::token_type::OP, "="},
+            markargs::token{markargs::token::token_type::NAME, "b"},
+            markargs::token{markargs::token::token_type::OP, "+"},
+            markargs::token{markargs::token::token_type::NUMBER, "5"}
+    };
+    std::cout << tokens;
+
+    if (tokens.size() != correct_answer.size() || !std::equal(tokens.begin(), tokens.end(), correct_answer.begin()))
+    {
+        throw std::logic_error("tokenizer doesn't work");
+    }
+}
+
+void read_tilend_check()
+{
+    std::istringstream ss("a = b + 5");
+    std::cout << ss.str() << '\n';
+    markargs::tokenizer tokenizer(ss);
+    std::vector<markargs::token> tokens;
+    markargs::token tk;
+    while (tokenizer >> tk)
+    {
+        tokens.push_back(tk);
+    }
+
+    std::vector<markargs::token> correct_answer{
+            markargs::token{markargs::token::token_type::NAME, "a"},
+            markargs::token{markargs::token::token_type::OP, "="},
+            markargs::token{markargs::token::token_type::NAME, "b"},
+            markargs::token{markargs::token::token_type::OP, "+"},
+            markargs::token{markargs::token::token_type::NUMBER, "5"}
+    };
+    std::cout << tokens;
+
+    if (tokens.size() != correct_answer.size() || !std::equal(tokens.begin(), tokens.end(), correct_answer.begin()))
+    {
+        throw std::logic_error("tokenizer doesn't work");
+    }
+}
+
 int main()
 {
-	std::istringstream ss("a = b + 5");
-	std::cout << ss.str() << '\n';
-	tokenizer t(ss);
-	std::vector<token> tokens(5);
-	for (auto& tk : tokens)
-	{
-		t >> tk;
-	}
-
-	std::vector<token> correct_answer{
-		token{token::token_type::NAME, "a"},
-		token{token::token_type::OP, "="},
-		token{token::token_type::NAME, "b"},
-		token{token::token_type::OP, "+"},
-		token{token::token_type::NUMBER, "5"}
-	};
-	std::cout << tokens;
-
-	if (tokens.size() != correct_answer.size() || !std::equal(tokens.begin(), tokens.end(), correct_answer.begin()))
-	{
-		throw std::logic_error("tokenizer doesn't work");
-	}
-
-
+    fixed_tokencount_check();
+    read_tilend_check();
 }
