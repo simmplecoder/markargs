@@ -9,3 +9,4 @@ add_executable(tokenizer
         src/tokenizer/token.hpp
         src/tokenizer/syntax_error.hpp
         src/tokenizer/tokenizer.cpp)
+add_subdirectory(src/tokenizer)

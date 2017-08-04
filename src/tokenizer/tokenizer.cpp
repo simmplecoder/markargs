@@ -108,4 +108,37 @@ namespace markargs
 
         return t;
     }
+
+    tokenizer::tokenizer_iterator::tokenizer_iterator():
+            tknizer(nullptr)
+    {}
+
+    tokenizer::tokenizer_iterator::tokenizer_iterator(tokenizer& tkzer):
+            tknizer(&tkzer)
+    {
+        *tknizer >> tk;
+    }
+
+    tokenizer::tokenizer_iterator& tokenizer::tokenizer_iterator::operator++()
+    {
+        *tknizer >> tk;
+        return *this;
+    }
+
+    tokenizer::tokenizer_iterator tokenizer::tokenizer_iterator::operator++(int)
+    {
+        auto copy = *this;
+        ++*this;
+        return copy;
+    }
+
+    token& tokenizer::tokenizer_iterator::operator*()
+    {
+        return tk;
+    }
+
+    bool operator!=(const tokenizer_iterator& lhs, const tokenizer_iterator& rhs)
+    {
+        return lhs.tknizer == rhs.tknizer;
+    }
 }
