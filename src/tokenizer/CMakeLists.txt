@@ -3,9 +3,12 @@ project(compiler)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(tokenizer
+add_library(tokenizer tokenizer.cpp)
+set(TOKENIZER_HEADER_FILES token.hpp tokenizer.hpp)
+
+add_executable(tokenizer_tests
         main.cpp
         tokenizer.hpp
         token.hpp
-        syntax_error.hpp
+        ../semantic_analysis/syntax_error.hpp
         tokenizer.cpp)

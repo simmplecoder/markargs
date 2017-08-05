@@ -121,7 +121,12 @@ namespace markargs
 
     tokenizer::tokenizer_iterator& tokenizer::tokenizer_iterator::operator++()
     {
+        tk = token{};
         *tknizer >> tk;
+        if (!tk)
+        {
+            tknizer = nullptr;
+        }
         return *this;
     }
 
@@ -139,6 +144,6 @@ namespace markargs
 
     bool operator!=(const tokenizer_iterator& lhs, const tokenizer_iterator& rhs)
     {
-        return lhs.tknizer == rhs.tknizer;
+        return lhs.tknizer != rhs.tknizer; //returning false doesn't mean they're equal!
     }
 }

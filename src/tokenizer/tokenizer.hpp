@@ -4,7 +4,6 @@
 #include <iostream>
 #include <iterator>
 
-#include "syntax_error.hpp"
 #include "token.hpp"
 
 namespace markargs

@@ -27,6 +27,11 @@ namespace markargs
                 tp(tp_),
                 payload(payload_)
         {}
+
+        bool operator!()
+        {
+            return tp == token_type::NONE;
+        }
     };
 
     inline bool operator==(const token& lhs, const token& rhs)

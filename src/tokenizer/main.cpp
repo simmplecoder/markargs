@@ -63,15 +63,25 @@ void fixed_tokencount_check()
 
 void read_tilend_check()
 {
-    std::istringstream ss("a = b + 5");
-    std::cout << ss.str() << '\n';
-    markargs::tokenizer tokenizer(ss);
-    std::vector<markargs::token> tokens;
+    std::string expr_str("a = b + 5");
+    std::istringstream ss1(expr_str);
+    std::istringstream ss2(expr_str);
+    std::cout << ss1.str() << '\n';
+    markargs::tokenizer tokenizer(ss1);
+    markargs::tokenizer tokenizer_copy(ss2);
+
+    //exhaust tokenizer
+    std::vector<markargs::token> tokenizer_result;
     markargs::token tk;
     while (tokenizer >> tk)
     {
-        tokens.push_back(tk);
+        tokenizer_result.push_back(tk);
     }
+
+    markargs::tokenizer_iterator first(tokenizer_copy);
+    markargs::tokenizer_iterator last;
+    std::vector<markargs::token> tokenizer_it_result{first, last};
+
 
     std::vector<markargs::token> correct_answer{
             markargs::token{markargs::token::token_type::NAME, "a"},
@@ -80,11 +90,19 @@ void read_tilend_check()
             markargs::token{markargs::token::token_type::OP, "+"},
             markargs::token{markargs::token::token_type::NUMBER, "5"}
     };
-    std::cout << tokens;
+    std::cout << "tokenizer result:\n" << tokenizer_result << '\n';
+    std::cout << "tokenizer_iterator result:\n" << tokenizer_it_result << '\n';
 
-    if (tokens.size() != correct_answer.size() || !std::equal(tokens.begin(), tokens.end(), correct_answer.begin()))
+    if (tokenizer_result.size() != correct_answer.size() ||
+            !std::equal(tokenizer_result.begin(), tokenizer_result.end(), correct_answer.begin()))
     {
         throw std::logic_error("tokenizer doesn't work");
+    }
+
+    if (tokenizer_it_result.size() != correct_answer.size() ||
+        !std::equal(tokenizer_it_result.begin(), tokenizer_it_result.end(), correct_answer.begin()))
+    {
+        throw std::logic_error("tokenizer_iterator doesn't work");
     }
 }
 
