@@ -10,5 +10,5 @@ add_executable(tokenizer_tests
         main.cpp
         tokenizer.hpp
         token.hpp
-        ../semantic_analysis/syntax_error.hpp
+        token.cpp
         tokenizer.cpp)

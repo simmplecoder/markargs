@@ -2,12 +2,14 @@
 #define COMPILER_TOKEN_HPP
 
 #include <string>
+#include <iosfwd>
 
 namespace markargs
 {
 
-    struct token
+    class token
     {
+    public:
         enum class token_type
         {
             NAME,
@@ -16,27 +18,30 @@ namespace markargs
             NONE //for debug purposes
         };
 
-        token_type tp;
-        std::string payload;
+    private:
+        token_type current_tp;
+        std::string current_payload;
+    public:
+        token();
+        token(token_type tp_, const std::string& payload_);
 
-        token() :
-                tp(token_type::NONE)
-        {}
+        token_type type() const;
+        const std::string& payload() const;
 
-        token(token_type tp_, const std::string& payload_) :
-                tp(tp_),
-                payload(payload_)
-        {}
+        bool operator!();
+        friend std::istream& operator>>(std::istream& is, markargs::token& tk);
 
-        bool operator!()
-        {
-            return tp == token_type::NONE;
-        }
+    private:
+        token_type classify(char c);
+        bool is_operator(char c);
     };
+
+    std::istream& operator>>(std::istream& is, markargs::token& tk);
+    std::ostream& operator<<(std::ostream& os, const markargs::token& tk);
 
     inline bool operator==(const token& lhs, const token& rhs)
     {
-        return lhs.tp == rhs.tp && lhs.payload == rhs.payload;
+        return lhs.type() == rhs.type() && lhs.payload() == rhs.payload();
     }
 
     inline bool operator!=(const token& lhs, const token& rhs)
