@@ -3,12 +3,10 @@ project(compiler)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_library(tokenizer tokenizer.cpp)
-set(TOKENIZER_HEADER_FILES token.hpp tokenizer.hpp)
+add_library(tokenizer token.cpp)
+set(TOKENIZER_HEADER_FILES token.hpp)
 
 add_executable(tokenizer_tests
         main.cpp
-        tokenizer.hpp
         token.hpp
-        token.cpp
-        tokenizer.cpp)
+        token.cpp)
