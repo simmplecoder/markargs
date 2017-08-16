@@ -41,10 +41,13 @@ namespace markargs
             parse(tokens);
         }
 
+        ~syntax_tree();
+
         friend std::ostream& operator<<(std::ostream& os, const syntax_tree& tree);
     private:
         void parse(std::queue<token>& tokens);
         void print(std::ostream& os, const node& n) const;
+        void recursive_destruct(node* n);
     };
 }
 

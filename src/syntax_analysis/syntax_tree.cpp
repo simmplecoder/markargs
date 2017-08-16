@@ -120,6 +120,29 @@ namespace markargs
         }
     }
 
+    void syntax_tree::recursive_destruct(node* n)
+    {
+        if (n->left_operand != nullptr)
+        {
+            recursive_destruct(n->left_operand);
+        }
+
+        if (n->right_operand != nullptr)
+        {
+            recursive_destruct(n->right_operand);
+        }
+
+        delete n;
+    }
+
+    syntax_tree::~syntax_tree()
+    {
+        if (root != nullptr)
+        {
+            recursive_destruct(root);
+        }
+    }
+
     std::ostream& operator<<(std::ostream& os, const syntax_tree& tree)
     {
         tree.print(os, *tree.root);
