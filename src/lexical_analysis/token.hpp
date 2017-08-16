@@ -15,7 +15,9 @@ namespace markargs
             NAME,
             NUMBER,
             OP,
-            NONE //for debug purposes
+            NONE, //for debug purposes
+            START,
+            END
         };
 
     private:
