@@ -8,3 +8,5 @@ set(LEXICAL_ANALYSIS_HEADER_FILES token.hpp)
 
 add_executable(lexical_analysis_tests main.cpp)
 target_link_libraries(lexical_analysis_tests lexical_analysis)
+
+add_test(lexical-analysis-tests lexical_analysis_tests)

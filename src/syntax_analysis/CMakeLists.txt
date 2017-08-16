@@ -17,3 +17,5 @@ target_include_directories(syntax_analysis_tests PUBLIC ../lexical_analysis/)
 configure_file(./input.txt ${CMAKE_CURRENT_BINARY_DIR}/input.txt COPYONLY)
 configure_file(./input.txt ${CMAKE_CURRENT_BINARY_DIR}/answers.txt COPYONLY)
 configure_file(./failing_input.txt ${CMAKE_CURRENT_BINARY_DIR}/failing_input.txt COPYONLY)
+
+add_test(syntax-analysis-tests syntax_analysis_tests)
