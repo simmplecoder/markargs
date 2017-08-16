@@ -7,4 +7,3 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(src/lexical_analysis)
 add_subdirectory(src/syntax_analysis)
-add_subdirectory(src/semantic_analysis)
