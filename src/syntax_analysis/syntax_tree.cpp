@@ -13,6 +13,13 @@ namespace markargs
             right_operand(right_operand_)
     {}
 
+    syntax_tree::syntax_tree(syntax_tree&& other) noexcept:
+            root(other.root)
+    {
+        other.root = nullptr;
+        std::swap(operator_precedence, other.operator_precedence);
+    }
+
     void syntax_tree::parse(std::queue<markargs::token>& tokens)
     {
         std::stack<node*, std::vector<node*>> prev_expressions;
@@ -102,6 +109,16 @@ namespace markargs
         }
 
         root = prev_expressions.top();
+    }
+
+    syntax_tree::inorder_iterator syntax_tree::inorder_begin()
+    {
+        return inorder_iterator{root};
+    }
+
+    syntax_tree::inorder_iterator syntax_tree::inorder_end()
+    {
+        return {};
     }
 
     void syntax_tree::print(std::ostream& os, const node& n) const
