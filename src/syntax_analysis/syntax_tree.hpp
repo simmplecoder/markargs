@@ -86,6 +86,12 @@ namespace markargs
         void parse(std::queue<token>& tokens);
         void print(std::ostream& os, const node& n) const;
         void recursive_destruct(node* n);
+
+        void sweep_until_lowerprec(std::stack<node*, std::vector<node*>>& prev_expressions,
+                                   std::stack<token, std::vector<token>>& operator_tokens,
+                                   const token& current_token);
+        void sweep_all(std::stack<node*, std::vector<node*>>& prev_expressions,
+                       std::stack<token, std::vector<token>>& operator_tokens);
     };
 }
 

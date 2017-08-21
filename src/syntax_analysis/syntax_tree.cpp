@@ -25,15 +25,6 @@ namespace markargs
         std::stack<node*, std::vector<node*>> prev_expressions;
         std::stack<token, std::vector<token>> operator_tokens;
 
-        if (tokens.front().type() != token::token_type::NAME)
-        {
-            throw std::invalid_argument{"name must be first in the expression"};
-        }
-
-
-        prev_expressions.push(new node{tokens.front()});
-        tokens.pop();
-
         constexpr auto name = token::token_type::NAME;
         constexpr auto op = token::token_type::OP;
         constexpr auto number = token::token_type::NUMBER;
@@ -42,66 +33,27 @@ namespace markargs
         {
             const auto& current_token = tokens.front();
 
-            if (current_token.type() == op)
+            switch (current_token.type())
             {
-
-                while (!operator_tokens.empty() &&
-                       operator_precedence[operator_tokens.top().payload()] >=
-                       operator_precedence[current_token.payload()])
-                {
-                    auto oper = operator_tokens.top();
-                    operator_tokens.pop();
-
-                    if (prev_expressions.size() < 2)
-                    {
-                        throw std::invalid_argument{"either or both left or right side operands are missing"};
-                    }
-
-                    auto right_operand = prev_expressions.top();
-                    prev_expressions.pop();
-                    auto left_operand = prev_expressions.top();
-                    prev_expressions.pop();
-
-                    prev_expressions.push(new node{oper, left_operand, right_operand});
-                }
-
-                operator_tokens.push(current_token);
+                case op:
+                    sweep_until_lowerprec(prev_expressions, operator_tokens, current_token);
+                    operator_tokens.push(current_token);
+                    break;
+                case number:
+                    prev_expressions.push(new node{current_token});
+                    break;
+                case name:
+                    prev_expressions.push(new node{current_token});
+                    break;
+                default:
+                    throw std::invalid_argument{"unknown token type encountered"};
             }
-            else if (current_token.type() == number)
-            {
-                prev_expressions.push(new node{current_token});
-            }
-            else if (current_token.type() == name)
-            {
-                prev_expressions.push(new node{current_token});
-            }
-            else
-            {
-                throw std::invalid_argument{"unknown token type encountered"};
-            }
-
             tokens.pop();
         }
 
         //if there are any tokens left, they are in the right order, e.g. expression
         //can be evaluated applying operators from right to left
-        while (!operator_tokens.empty())
-        {
-            auto oper = operator_tokens.top();
-            operator_tokens.pop();
-
-            if (prev_expressions.size() < 2)
-            {
-                throw std::invalid_argument{"either or both left or right side operands are missing"};
-            }
-
-            auto right_operand = prev_expressions.top();
-            prev_expressions.pop();
-            auto left_operand = prev_expressions.top();
-            prev_expressions.pop();
-
-            prev_expressions.push(new node{oper, left_operand, right_operand});
-        }
+        sweep_all(prev_expressions, operator_tokens);
 
         if (prev_expressions.size() != 1)
         {
@@ -163,5 +115,52 @@ namespace markargs
     std::ostream& operator<<(std::ostream& os, const syntax_tree& tree)
     {
         tree.print(os, *tree.root);
+    }
+
+    void syntax_tree::sweep_until_lowerprec(std::stack<node*, std::vector<node*>>& prev_expressions,
+                                            std::stack<token, std::vector<token>>& operator_tokens,
+                                            const token& current_token)
+    {
+        while (!operator_tokens.empty() &&
+               operator_precedence[operator_tokens.top().payload()] >=
+               operator_precedence[current_token.payload()])
+        {
+            auto oper = operator_tokens.top();
+            operator_tokens.pop();
+
+            if (prev_expressions.size() < 2)
+            {
+                throw std::invalid_argument{"either or both left or right side operands are missing"};
+            }
+
+            auto right_operand = prev_expressions.top();
+            prev_expressions.pop();
+            auto left_operand = prev_expressions.top();
+            prev_expressions.pop();
+
+            prev_expressions.push(new node{oper, left_operand, right_operand});
+        }
+    }
+
+    void syntax_tree::sweep_all(std::stack<node*, std::vector<node*>>& prev_expressions,
+                                std::stack<token, std::vector<token>>& operator_tokens)
+    {
+        while (!operator_tokens.empty())
+        {
+            auto oper = operator_tokens.top();
+            operator_tokens.pop();
+
+            if (prev_expressions.size() < 2)
+            {
+                throw std::invalid_argument{"either or both left or right side operands are missing"};
+            }
+
+            auto right_operand = prev_expressions.top();
+            prev_expressions.pop();
+            auto left_operand = prev_expressions.top();
+            prev_expressions.pop();
+
+            prev_expressions.push(new node{oper, left_operand, right_operand});
+        }
     }
 }
