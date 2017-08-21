@@ -8,7 +8,7 @@ target_include_directories(syntax_analysis PUBLIC ../lexical_analysis/)
 target_link_libraries(syntax_analysis lexical_analysis)
 
 add_executable(syntax_analysis_tests
-        main.cpp
+        syntax_tree_tests.cpp
         syntax_tree.hpp
         )
 target_link_libraries(syntax_analysis_tests syntax_analysis)

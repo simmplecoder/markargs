@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 add_library(lexical_analysis token.hpp token.cpp)
 set(LEXICAL_ANALYSIS_HEADER_FILES token.hpp)
 
-add_executable(lexical_analysis_tests main.cpp)
+add_executable(lexical_analysis_tests token_tests.cpp)
 target_link_libraries(lexical_analysis_tests lexical_analysis)
 
 add_test(lexical-analysis-tests lexical_analysis_tests)
