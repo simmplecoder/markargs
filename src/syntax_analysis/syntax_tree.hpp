@@ -81,10 +81,9 @@ namespace markargs
 
         ~syntax_tree();
 
-        friend std::ostream& operator<<(std::ostream& os, const syntax_tree& tree);
+        friend std::ostream& operator<<(std::ostream& os, syntax_tree& tree);
     private:
         void parse(std::queue<token>& tokens);
-        void print(std::ostream& os, const node& n) const;
         void recursive_destruct(node* n);
 
         void sweep_until_lowerprec(std::stack<node*, std::vector<node*>>& prev_expressions,

@@ -3,6 +3,8 @@
 #include <stack>
 #include <string>
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 namespace markargs
 {
@@ -73,22 +75,6 @@ namespace markargs
         return {};
     }
 
-    void syntax_tree::print(std::ostream& os, const node& n) const
-    {
-        const node* current = &n;
-        if (current->left_operand != nullptr)
-        {
-            print(os,*(current->left_operand));
-        }
-
-        os << current->tk.payload();
-
-        if (current->right_operand != nullptr)
-        {
-            print(os, *(current->right_operand));
-        }
-    }
-
     void syntax_tree::recursive_destruct(node* n)
     {
         if (n->left_operand != nullptr)
@@ -112,10 +98,7 @@ namespace markargs
         }
     }
 
-    std::ostream& operator<<(std::ostream& os, const syntax_tree& tree)
-    {
-        tree.print(os, *tree.root);
-    }
+
 
     void syntax_tree::sweep_until_lowerprec(std::stack<node*, std::vector<node*>>& prev_expressions,
                                             std::stack<token, std::vector<token>>& operator_tokens,
@@ -162,5 +145,14 @@ namespace markargs
 
             prev_expressions.push(new node{oper, left_operand, right_operand});
         }
+    }
+
+    std::ostream& operator<<(std::ostream& os, syntax_tree& tree)
+    {
+        std::transform(tree.inorder_begin(), tree.inorder_end(),
+                       std::ostream_iterator<std::string>(os),
+                       [](const token& tk){
+                           return tk.payload();
+                       });
     }
 }
