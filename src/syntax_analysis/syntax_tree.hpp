@@ -8,6 +8,7 @@
 #include <stack>
 
 #include <token.hpp>
+#include <set>
 
 namespace markargs
 {
@@ -34,8 +35,7 @@ namespace markargs
 
             node* current_node;
             std::stack<node*> prev_nodes;
-            //std::stack<node*> visited_nodes;
-            std::map<node*, bool> visited;
+            std::set<node*> visited_nodes;
         public:
             inorder_iterator();
 
@@ -54,6 +54,7 @@ namespace markargs
         private:
             inorder_iterator(node* current);
             node* find_leftmost_node(node* from);
+            bool visited(node* n);
         };
 
         template <typename InputIterator>

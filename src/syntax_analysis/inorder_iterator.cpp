@@ -6,7 +6,7 @@ namespace markargs
             current_node(current)
     {
         current_node = find_leftmost_node(current);
-        visited[current_node] = true;
+        visited_nodes.insert(current_node);
     }
 
     syntax_tree::node* syntax_tree::inorder_iterator::find_leftmost_node(node* from)
@@ -26,16 +26,16 @@ namespace markargs
 
     syntax_tree::inorder_iterator& syntax_tree::inorder_iterator::operator++()
     {
-        if (current_node->left_operand != nullptr && !visited[current_node->left_operand])
+        if (current_node->left_operand != nullptr && !visited(current_node->left_operand))
         {
             prev_nodes.push(current_node);
             current_node = current_node->left_operand;
             return ++*this; //recurse
         }
 
-        if (!visited[current_node])
+        if (!visited(current_node))
         {
-            visited[current_node] = true;
+            visited_nodes.insert(current_node);
             return *this;
         }
         else
@@ -90,7 +90,10 @@ namespace markargs
         return &current_node->tk;
     }
 
-
+    bool syntax_tree::inorder_iterator::visited(node* n)
+    {
+        return visited_nodes.find(n) != visited_nodes.end();
+    }
 
     bool operator==(const syntax_tree::inorder_iterator& lhs, const syntax_tree::inorder_iterator& rhs)
     {
