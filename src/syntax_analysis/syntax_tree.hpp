@@ -48,8 +48,8 @@ namespace markargs
             token* operator->();
             const token* operator->() const;
 
-            friend bool operator==(const inorder_iterator lhs, const inorder_iterator rhs);
-            friend bool operator!=(const inorder_iterator lhs, const inorder_iterator rhs);
+            friend bool operator==(const inorder_iterator& lhs, const inorder_iterator& rhs);
+            friend bool operator!=(const inorder_iterator& lhs, const inorder_iterator& rhs);
 
         private:
             inorder_iterator(node* current);

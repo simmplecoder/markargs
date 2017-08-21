@@ -92,12 +92,12 @@ namespace markargs
 
 
 
-    bool operator==(const syntax_tree::inorder_iterator lhs, const syntax_tree::inorder_iterator rhs)
+    bool operator==(const syntax_tree::inorder_iterator& lhs, const syntax_tree::inorder_iterator& rhs)
     {
         return lhs.current_node == rhs.current_node;
     }
 
-    bool operator!=(const syntax_tree::inorder_iterator lhs, const syntax_tree::inorder_iterator rhs)
+    bool operator!=(const syntax_tree::inorder_iterator& lhs, const syntax_tree::inorder_iterator& rhs)
     {
         return !(lhs == rhs);
     }
