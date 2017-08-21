@@ -81,8 +81,6 @@ namespace markargs
         inorder_iterator inorder_end();
 
         ~syntax_tree();
-
-        friend std::ostream& operator<<(std::ostream& os, syntax_tree& tree);
     private:
         void parse(std::queue<token>& tokens);
         void recursive_destruct(node* n);
@@ -93,6 +91,8 @@ namespace markargs
         void sweep_all(std::stack<node*, std::vector<node*>>& prev_expressions,
                        std::stack<token, std::vector<token>>& operator_tokens);
     };
+
+    std::ostream& operator<<(std::ostream& os, syntax_tree& tree);
 }
 
 #endif //COMPILER_PARSE_TREE_HPP
