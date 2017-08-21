@@ -4,6 +4,8 @@ project(compiler)
 set(CMAKE_CXX_STANDARD 14)
 
 add_library(syntax_analysis syntax_tree.hpp syntax_tree.cpp inorder_iterator.cpp)
+
+add_dependencies(syntax_analysis lexical_analysis)
 target_include_directories(syntax_analysis PUBLIC ../lexical_analysis/)
 target_link_libraries(syntax_analysis lexical_analysis)
 
